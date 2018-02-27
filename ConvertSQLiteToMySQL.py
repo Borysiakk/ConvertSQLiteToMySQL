@@ -8,15 +8,25 @@ class SqliteConventerMySql:
     __CursorMySql = None
 
     def __init__(self,DateBaseName,user,password,host,DateBaseNameMySql):
-        self.__ConnectionSqlite = sqlite3.Connection(DateBaseName)
-        self.__CursorSqlite = self.__ConnectionSqlite.cursor()
+        try:
+            self.__ConnectionSqlite = sqlite3.Connection(DateBaseName)
+            self.__CursorSqlite = self.__ConnectionSqlite.cursor()
+        except sqlite3.Error:
+            print("Error opening %s "%DateBaseNameMySql)
 
-        self.__ConnectionMySql = pymysql.connect(host,user,password)
-        self.__CursorMySql = self.__ConnectionMySql.cursor()
+        try:
+            self.__ConnectionMySql = pymysql.connect(host,user,password)
+            self.__CursorMySql = self.__ConnectionMySql.cursor()
+        except pymysql.Error:
+            print("Error connect mysql")
 
-        self.__CursorMySql.execute("CREATE DATABASE " + DateBaseNameMySql)
-        self.__CursorMySql.execute("USE " + DateBaseNameMySql)
+        try:
+            self.__CursorMySql.execute("CREATE DATABASE " + DateBaseNameMySql)
+            self.__CursorMySql.execute("USE " + DateBaseNameMySql)
+        except pymysql.MySQLError:
+            print("There is already a database with this name")
         self.__main()
+
 
 
 
@@ -61,4 +71,4 @@ class SqliteConventerMySql:
 
 
 
-test = SqliteConventerMySql("Test.db","root","","localhost","TestAtomowe")
+test = SqliteConventerMySql("Test.db","root","","localhost","DateBaseName")
